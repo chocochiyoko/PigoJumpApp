@@ -2,6 +2,7 @@ package com.example.pigojump;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public abstract class GameObject {
             this.width = img.getWidth();
         }
         public GameRectangle getRect (){
-            return new GameRectangle(x, y-img.getHeight(), width, height);
+            return new GameRectangle(x, y-img.getHeight(), img.getWidth(), img.getHeight());
         }
         public int getx () {return x;}
         public int gety () {return y; }
