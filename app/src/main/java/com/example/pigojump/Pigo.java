@@ -1,8 +1,12 @@
+//mlab
+
 package com.example.pigojump;
 
 import android.graphics.Bitmap;
 
 import com.example.pigojump.MapElements.Clouds.Cloud;
+import com.example.pigojump.MapElements.Clouds.HorizontalCloud;
+import com.example.pigojump.MapElements.Clouds.VerticalCloud;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -10,10 +14,10 @@ import java.util.TimerTask;
 
 public class Pigo extends GameObject{
     private boolean JumpPressed = false;
-    private boolean RightPressed = false;
-    private boolean LeftPressed;
+    private int RightPressed;
+    private int LeftPressed;
     private boolean JumpEnd;
-    private int vy = -20, vx = 0, jumpPower = 10, slipspeed = 5;
+    private int vy = -20, vx = 0, jumpPower = 10, slipspeed = 8;
     private boolean isOnLand = false;
     private int camy;
     public static int counter = 0;
@@ -25,6 +29,8 @@ public class Pigo extends GameObject{
 //    private JumpAnimation jumpanim;
     private Timer timer = new Timer();
     private ScreenInfo screen = new ScreenInfo();
+    private boolean lastvertical = false;
+    private int lastvy;
 
 
     public Pigo(Bitmap img, int x, int y){
@@ -36,21 +42,14 @@ public class Pigo extends GameObject{
 
     }
 
-    void toggleRightPressed() {
-        this.RightPressed = true;
+    void toggleRightPressed(int i) {
+        this.RightPressed = i;
     }
 
-    void toggleLeftPressed() {
-        this.LeftPressed = true;
+    void toggleLeftPressed(int i) {
+        this.LeftPressed = i;
     }
 
-    void unToggleRightPressed() {
-        this.RightPressed = false;
-    }
-
-    void unToggleLeftPressed() {
-        this.LeftPressed = false;
-    }
 
     void ToggleJumpPressed () {this.JumpPressed = true; }
 
@@ -88,7 +87,14 @@ public class Pigo extends GameObject{
         counter ++;
 
         sideAccelerate(screenWidth);
-        if (this.JumpPressed && jumpPower <= screenHeight/30 ) {
+        if (lastvertical){
+            vy = lastvy;
+        }
+        if (lastvertical && counter % 10 == 0 ){
+            lastvertical = false;
+        }
+
+        if (this.JumpPressed && jumpPower <= screenHeight/48 ) {
             jumpPower ++;
         }
 
@@ -101,14 +107,15 @@ public class Pigo extends GameObject{
             jumpPower = 10;
         }
 
-
-        x+=vx/4;
-        y+=vy/1.8;
-
-
-        if (vy >= -(screenHeight/20)){
+        if (vy >= -(screenHeight/60)){
             vy -= screenHeight/900;
         }
+
+        x+=(vx*.5);
+        y+=vy;
+
+
+
 
         camy = y+screen.getScreenHeight()/2;
         if (isOnLand){
@@ -145,42 +152,63 @@ public class Pigo extends GameObject{
     public boolean isFreeFall (){ return freeFall; }
 
     public void sideAccelerate (int screenWidth){
-        if (this.LeftPressed && vx > -(screenWidth/25) && counter % 5 == 0) {
-//            if (vx <= 0 && vx > -7){
-//
-//                vx = -7;
-//            }
-            if (vx > (screenWidth/10)){
-                vx -=screenWidth/40;
-            }
-            vx -= screenWidth/120;
-            //vx--;
-        }
-        else if (this.RightPressed && vx < (screenWidth/25) && counter % 5 == 0) {
-//            if (vx >= 0 && vx < 7){
-//                vx = 7;
-//            }
-            if (vx < -(screenWidth/10)){
-                vx += screenWidth/40;
-            }
-            vx += screenWidth/120;
-            //vx++;
-        }
-        else if (!this.RightPressed && vx > 0 && counter % slipspeed == 0){
-            vx--;
-        }
-        else if (!this.LeftPressed && vx < 0 && counter % slipspeed == 0 ){
-            vx++;
-        }
-        else {
-            if ( vx < 0){
-                vx++;
-            }
-            else if (vx > 0){
-                vx--;
-            }
-        }
 
+        if (this.LeftPressed == 1 && vx > -(screenWidth/300)){
+            vx -= screenWidth/1000;
+        }
+        else if (this.RightPressed == 1 && vx < (screenWidth/300)){
+            vx += screenWidth/1000;
+        }
+        if (this.LeftPressed == 2 && vx > -(screenWidth/35)){
+            vx -= screenWidth/600;
+        }
+        else if (this.RightPressed == 2 && vx < (screenWidth/35)){
+            vx += screenWidth/600;
+        }
+        else if (this.RightPressed == 0 && this.LeftPressed == 0){
+            if (vx > 0){
+                vx -= screenWidth/1000;
+            }
+            else if (vx < 0){
+                vx += screenWidth/1000;
+            }
+        }
+//        if (this.LeftPressed && vx > -(screenWidth/25) && counter % 4 == 0) {
+////            if (vx <= 0 && vx > -7){
+////
+////                vx = -7;
+////            }
+//            if (vx > (screenWidth/10)){
+//                vx -=screenWidth/40;
+//            }
+//            vx -= screenWidth/300;
+//            //vx--;
+//        }
+//        else if (this.RightPressed && vx < (screenWidth/25) && counter % 4 == 0) {
+////            if (vx >= 0 && vx < 7){
+////                vx = 7;
+////            }
+//            if (vx < -(screenWidth/10)){
+//                vx += screenWidth/40;
+//            }
+//            vx += screenWidth/300;
+//            //vx++;
+//        }
+//        else if (!this.RightPressed && vx > 0 && counter % slipspeed == 0){
+//            vx -= screenWidth/1000;
+//        }
+//        else if (!this.LeftPressed && vx < 0 && counter % slipspeed ==0){
+//            vx += screenWidth/1000;
+//        }
+////        else {
+////            if ( vx < 0){
+////                vx++;
+////            }
+////            else if (vx > 0){
+////                vx--;
+////            }
+////        }
+//
 
     }
 
@@ -198,25 +226,33 @@ public class Pigo extends GameObject{
     public void allCollisions(ArrayList<GameObject> objects){
 
         for (int i = 0; i < objects.size(); i++){
-            if (vy <= 0 && y-img.getHeight() - objects.get(i).gety() >= -22
-                    && getRect().intersection(objects.get(i).getRect()).getWidth() > 10
+            if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/4)
+                        && (y-img.getHeight() - objects.get(i).gety() >= 0))
+                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/4)
+                         &&  (y-img.getHeight() - objects.get(i).gety() <= 0)   ))
+                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/650
+                    && objects.get(i) instanceof VerticalCloud){
+                y = objects.get(i).gety()+img.getHeight();
+                vy = 0;
+                isOnLand = true;
+            }
+            else if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/4)
+                    && (y-img.getHeight() - objects.get(i).gety() >= 0))
+                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/4)
+                    &&  (y-img.getHeight() - objects.get(i).gety() <= 0)   ))
+                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/300
                     && objects.get(i) instanceof Cloud) {
                 isOnLand = true;
                 vy = 0;
                 y += getRect().intersection(objects.get(i).getRect()).getHeight();
-//                if (objects.get(i) instanceof VerticalCloud){
-//                    y += ((VerticalCloud) objects.get(i)).getv()*1.15;
-//                }
-//                if (objects.get(i) instanceof HorizontalCloud){
-//                    x += ((HorizontalCloud) objects.get(i)).getv()*2 ;
-//                    if (((HorizontalCloud) objects.get(i)).getv() < 0 && counter % slipspeed == 0 ){
+
+
+
+                if (objects.get(i) instanceof HorizontalCloud){
+                    x += ((HorizontalCloud) objects.get(i)).getv() ;
 //
-//                    }
-//                    else if ( counter % slipspeed == 0 ){
-//
-//                    }
-//
-//                }
+
+                }
 //            if (objects.get(i) instanceof PowerUps){
 //                System.out.println("power up?");
 //                ((PowerUps) objects.get(i)).power(this);

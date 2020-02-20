@@ -25,7 +25,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameMap pigoMap;
     private Pigo pigo;
     private Collisions collisions;
-    private pigoControls controls;
+//    private pigoControls controls;
     private int cam;
     private ArrayList<Bitmap> mapImages = new ArrayList<Bitmap>();
 
@@ -44,6 +44,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.cloudorange));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.cloudyellow));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.clearcloud));
+            mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.star));
         }
         catch (Exception e){
             Log.i("bleh", "errooooor");
@@ -51,7 +52,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         pigoMap = new GameMap(mapImages);
         pigo = new Pigo(pigoImg, 500, 1000);
         collisions = new Collisions(pigoMap,pigo);
-        controls = new pigoControls(pigo);
 
 
 
@@ -62,9 +62,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
+
+
+        pigoMap.updateElements();
         pigo.update(getWidth(), getHeight());
-        cam = pigo.getcamy();
         collisions.checkCollisions(getWidth());
+        cam = pigo.getcamy();
+
     }
 
     public void drawSkyMap(Canvas canvas){

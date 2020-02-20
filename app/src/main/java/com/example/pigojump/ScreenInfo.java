@@ -8,7 +8,7 @@ import android.view.SurfaceView;
 public class ScreenInfo {
     private int screenWidth;
     private int screenHeight;
-    private int cloudSpace  = 5;
+    private int cloudSpace  = 7;
 
     public ScreenInfo(){
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;

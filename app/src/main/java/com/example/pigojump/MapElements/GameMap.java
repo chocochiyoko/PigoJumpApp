@@ -41,6 +41,7 @@ public class GameMap {
     private Timer timer = new Timer();
     private GameObject toRemove;
     private ScreenInfo screen = new ScreenInfo();
+    private NormalCloud ruler; 
 
     public GameMap(ArrayList<Bitmap> images){
         try {
@@ -49,16 +50,8 @@ public class GameMap {
             cloudVertImg = images.get(2);
             cloudBreakImg = images.get(3);
             cloudClearImg = images.get(4);
-
-
-//
-//            cloudNormalImg = BitmapFactory.decodeResource(SV.getResources(), R.drawable.cloudpurple);
-//            cloudHoriImg = BitmapFactory.decodeResource(SV.getResources(), R.drawable.cloudblue);
-//            cloudVertImg = BitmapFactory.decodeResource(SV.getResources(), R.drawable.cloudorange);
-//            cloudBreakImg = BitmapFactory.decodeResource(SV.getResources(), R.drawable.cloudyellow);
-//            appleImg = ImageIO.read(getClass().getResource("/resources/apple.png"));
-//            starImg = ImageIO.read(getClass().getResource("/resources/star.png"));
-//            bugImg = ImageIO.read(getClass().getResource("/resources/bugo.png"));
+            starImg = images.get(5);
+            ruler = new NormalCloud(cloudNormalImg, -100, -100);
 
         }
         catch (Exception e){
@@ -74,6 +67,13 @@ public class GameMap {
         makeStars(15);
 
     }
+    public void updateElements (){
+        for (int i = 0; i < collideables.size(); i++){
+
+            collideables.get(i).update(collideables);
+        }
+
+    }
     public void drawElements (Canvas canvas, int camera){
 
         for (int i = 0; i< nonCollideables.size(); i++){
@@ -81,7 +81,7 @@ public class GameMap {
         }
 
         for (int i = 0; i < collideables.size(); i++){
-            collideables.get(i).update(collideables);
+
             collideables.get(i).drawImage(canvas, camera);
         }
 
@@ -100,17 +100,17 @@ public class GameMap {
                     object.getImgHeight() / 4
             );
 
-            if (Math.abs(pigo.gety() - pigo.getImgHeight() - object.gety()) <=3
-                    && (pigo.getx() + 5 >= object.getx() - pigo.getImgWidth())
-                    && (pigo.getx() - 5 <= object.getx() + cloudNormalImg.getWidth())
-                    && pigo.getvy() <= 0
-                    && object instanceof Cloud) {
-                pigo.setIsOnLand(true);
-            }
+//            if (Math.abs(pigo.gety() - pigo.getImgHeight() - object.gety()) <=screen.getScreenHeight()/20
+//                    && (pigo.getx()>= object.getx() - pigo.getImgWidth())
+//                    && (pigo.getx() <= object.getx() + pigo.getImgWidth())
+//                    && pigo.getvy() <= 0
+//                    && object instanceof Cloud) {
+//                pigo.setIsOnLand(true);
+//            }
 
 //            if (Math.abs(pigo.gety() - pigo.getImgHeight() - object.gety()) <= 20
 //                    && (pigo.getx() + 5 >= object.getx() - pigo.getImgWidth())
-//                    && (pigo.getx() - 5 <= object.getx() + cloudNormalImg.getWidth())
+//                    && (pigo.getx() - 5 <= object.getx() + ruler.getImgWidth())
 //                    && object instanceof Enemies
 //                    && pigo.getvy() <= 0
 //                    && pigo.getJumpEnd()
@@ -135,18 +135,23 @@ public class GameMap {
 //                pigo.takeDamage();
 //
 //            }
-            if (pigo.getRect().intersects(object.getRect())) {
-                ReturnVal.add(object);}
+            if (pigo.getRect().intersects(object.getRect()) ||
+                    (pigo.gety() - pigo.getImgHeight() -object.gety() < screen.getScreenHeight()/50
+                        && pigo.gety() - pigo.getImgHeight() -object.gety() > 0)) {
+                ReturnVal.add(object);
+                //pigo.setIsOnLand(true);
 //                if (object instanceof PowerUps) {
 //                    ((PowerUps) object).power(pigo);
 //                    ((PowerUps) object).remove(collideables);
 //
 //                }
-//                else if (object instanceof BreakCloud && pigo.getIsOnLand()
-//                        &&  !((BreakCloud) object).isRunning()){
-//                    ((BreakCloud) object).disappear(collideables, pigo);
-//                    i[0]++;
-//                }
+                if (object instanceof BreakCloud && object.getRect().intersects(pigo.getRect())
+                        && pigo.getvy() <=0
+                        &&  !((BreakCloud) object).isRunning()){
+                    ((BreakCloud) object).disappear(collideables, pigo);
+                    i[0]++;
+                    System.out.println("break cloud!");
+                }
 //
 //
 ////                if (i[0] % (collideables.size()*0.6) >= (collideables.size()*0.6)-10) {
@@ -154,18 +159,19 @@ public class GameMap {
 ////                    remakeClouds();
 ////                    makeStars(maker);
 ////                }
-//                if (i[0] > collideables.size()*0.5) {
-//                    System.out.println("remake at on cloud y " + object.gety());
-//                    makeElements(maker);
-//                    makeStars(maker);
-//                }
+                if (i[0] > collideables.size()*0.5) {
+                    System.out.println("remake at on cloud y " + object.gety());
+                    makeElements(maker);
+                   // makeStars(maker);
+                }
+
 //
 //
 //            }
 //            if (pigo.getmaxy()-collideables.get(i[0]).gety() > 1000){
 //                collideables.remove(i[0]);
 //            }
-//
+             }
 
 
 
@@ -186,7 +192,7 @@ public class GameMap {
             int length = rand.nextInt(3);
             int speed = 1 + rand.nextInt(2);
             int apple = rand.nextInt(10);
-            int xlimit = 350;
+            int xlimit = screen.getScreenWidth()/2;
             if (lastspeed == speed){
                 speed ++;
             }
@@ -196,23 +202,23 @@ public class GameMap {
                 xlimit = 300;
             }
             if (lastvertical){
-                ymove = screen.getScreenHeight()/4 +rand.nextInt(200);
+                ymove = screen.getScreenHeight()/3 +rand.nextInt(screen.getScreenHeight()/4);
                 lastvertical = false;
             }
             else {
-                ymove = screen.getScreenHeight()/4 + rand.nextInt(130);
+                ymove = screen.getScreenHeight()/4 + rand.nextInt(screen.getScreenHeight()/10);
             }
 
-//            do {
-//                xpos = rand.nextInt(screen.getScreenWidth()-((1+ length) * cloudNormalImg.getWidth()));
-//            } while (Math.abs(xpos-lastxpos) > xlimit);
+            do {
+                xpos = rand.nextInt(screen.getScreenWidth()-((1+ length) * ruler.getImgWidth()));
+            } while (Math.abs(xpos-lastxpos) > xlimit);
 
 //            if (apple >5 && lastEnemy + 1000 < lastypos  ){
 //
 //                int enemyy = lastypos + rand.nextInt(ymove);
 //                int enemyx = 0;
 //                if (xpos < lastxpos){
-//                    enemyx = lastxpos+ cloudNormalImg.getWidth() + rand.nextInt(screen.getScreenWidth() - lastxpos+ cloudNormalImg.getWidth()-bugImg.getWidth());
+//                    enemyx = lastxpos+ ruler.getImgWidth() + rand.nextInt(screen.getScreenWidth() - lastxpos+ ruler.getImgWidth()-bugImg.getWidth());
 //                }
 //                else {
 //                    enemyx = rand.nextInt(lastxpos);
@@ -223,39 +229,42 @@ public class GameMap {
 //
 //            }
 
-
+            
             if (type == 0){
                 for (int j=0;  j <= length; j++){
-                    collideables.add(new NormalCloud(cloudNormalImg, xpos+(j*cloudNormalImg.getWidth()), ymove + lastypos));
-                    lastxpos = xpos+((j*cloudNormalImg.getWidth())/2);
+                    collideables.add(new NormalCloud(cloudNormalImg, xpos+(j*ruler.getImgWidth()), ymove + lastypos));
+                    lastxpos = xpos+((j*ruler.getImgWidth())/2);
                 }
 
 
             }
             else if (type == 1){
                 for (int k = 0; k <= length; k++){
-                    collideables.add(new VerticalCloud(cloudVertImg, xpos+(k*cloudNormalImg.getWidth()), ymove + lastypos, speed));
-                    lastxpos = xpos+((k*cloudNormalImg.getWidth())/2);
+                    collideables.add(new VerticalCloud(cloudVertImg, xpos+(k*ruler.getImgWidth()), ymove + lastypos, speed));
+                    lastxpos = xpos+((k*ruler.getImgWidth())/2);
                 }
                 lastvertical = true;
             }
 //            else if (type == 2){
 //                for (int l = 0; l <= length; l++){
-//                    collideables.add(new HorizontalCloud(cloudHoriImg, xpos+((l*cloudNormalImg.getWidth())), ymove + lastypos, speed));
-//                    lastxpos = xpos+((l*cloudNormalImg.getWidth())/2);
+//                    collideables.add(new HorizontalCloud(cloudHoriImg, xpos+((l*ruler.getImgWidth())), ymove + lastypos, speed));
+//                    lastxpos = xpos+((l*ruler.getImgWidth())/2);
 //                }
 //            }
             else if (type == 2){
 
-                xpos = rand.nextInt(500);
-
+                xpos = rand.nextInt(screen.getScreenWidth()-(cloudNormalImg.getWidth()));
+//                for (int l = 0; l <= length; l++){
+//                    collideables.add(new HorizontalCloud(cloudHoriImg, xpos+(l*ruler.getImgWidth()), ymove + lastypos, speed, l));
+//                    lastxpos = xpos+((l*ruler.getImgWidth())/2);
+//                }
                 collideables.add(new HorizontalCloud(cloudHoriImg, xpos, ymove + lastypos, speed));
-                lastxpos = xpos+((cloudNormalImg.getWidth())/2);
+                lastxpos = xpos+((ruler.getImgWidth())/2);
             }
             else if (type == 3){
                 for (int m = 0; m <= length; m++){
-                    collideables.add(new BreakCloud(cloudBreakImg, xpos+(m*cloudNormalImg.getWidth()), ymove + lastypos, cloudClearImg));
-                    lastxpos = xpos+((m*cloudNormalImg.getWidth())/2);
+                    collideables.add(new BreakCloud(cloudBreakImg, xpos+(m*ruler.getImgWidth()), ymove + lastypos, cloudClearImg));
+                    lastxpos = xpos+((m*ruler.getImgWidth())/2);
                 }
                 collideables.add(new BreakCloud(cloudBreakImg, xpos, ymove+lastypos, cloudClearImg));
 
@@ -293,9 +302,9 @@ public class GameMap {
         for (int i = 0; i < starmaker; i++){
             StarCounter++;
             Random rand = new Random();
-            int xstar = rand.nextInt(750);
+            int xstar = rand.nextInt(screen.getScreenWidth()- starImg.getWidth());
             System.out.println("make star at " + xstar + " " + StarCounter*300);
-            //nonCollideables.add(new Stars(starImg, xstar, StarCounter*300));
+            nonCollideables.add(new Stars(starImg, xstar, StarCounter*(screen.getScreenHeight()/3)));
 
         }
 

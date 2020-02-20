@@ -58,18 +58,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             xAccel = event.values[0];
-            if (xAccel > 1){
-                this.pigo.unToggleRightPressed();
-                this.pigo.toggleLeftPressed();
+            if (xAccel >= 0.5 && xAccel <= 1){
+                this.pigo.toggleRightPressed(0);
+                this.pigo.toggleLeftPressed(1);
 
             }
+            else if (xAccel <= -0.5 && xAccel >= -1){
+                this.pigo.toggleLeftPressed(0);
+                this.pigo.toggleRightPressed(1);
+            }
+            else if (xAccel > 1){
+                this.pigo.toggleRightPressed(0);
+                this.pigo.toggleLeftPressed(2);
+            }
             else if (xAccel < -1){
-                this.pigo.unToggleLeftPressed();
-                this.pigo.toggleRightPressed();
+                this.pigo.toggleLeftPressed(0);
+                this.pigo.toggleRightPressed(2);
             }
             else {
-                this.pigo.unToggleLeftPressed();
-                this.pigo.unToggleRightPressed();
+                this.pigo.toggleLeftPressed(0);
+                this.pigo.toggleRightPressed(0);
             }
         }
 

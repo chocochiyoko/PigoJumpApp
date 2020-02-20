@@ -24,6 +24,10 @@ public class BreakCloud extends Cloud {
        this.clearImg = clearImg;
         temp = this;
         tempImg = this.img;
+        int height = screen.getScreenHeight()/45;
+        int width = screen.getScreenWidth()/screen.getCloudSpace();
+        this.clearImg = img.createScaledBitmap(clearImg, width, height, false);
+
     }
 
     public boolean isRunning (){
@@ -40,10 +44,10 @@ public class BreakCloud extends Cloud {
         TimerTask reInsert = new TimerTask() {
             @Override
             public void run() {
-                if (!pigo.isFreeFall()){
+                //if (!pigo.isFreeFall()){
                     System.out.println("reinsert");
                     objects.add(index, temp);
-                }
+                //}
 
             }
         };

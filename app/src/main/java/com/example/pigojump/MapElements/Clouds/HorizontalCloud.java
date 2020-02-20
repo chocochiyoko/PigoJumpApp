@@ -8,13 +8,16 @@ import java.util.ArrayList;
 
 public class HorizontalCloud extends Cloud{
     private int vx;
-    private int distance = 300;
+    private int distance = screen.getScreenWidth()/2;
     private int startx, length;
+    private int offset, offset2;
     public HorizontalCloud(Bitmap img, int x, int y, int speed) {
 
         super(img, x, y);
         startx = x;
-        vx = speed;
+        vx = speed*screen.getScreenWidth()/250;
+        this.offset = offset * img.getWidth();
+
     }
     @Override
     public void update(ArrayList<GameObject> clouds){
@@ -25,10 +28,10 @@ public class HorizontalCloud extends Cloud{
         else if ( x >= startx + distance){
             vx = vx*-1;
         }
-        else if ( x <= 0 ){
+        else if ( x <= offset ){
             vx = vx*-1;
         }
-        else if ( x >= 800-img.getWidth() ){
+        else if ( x >= screen.getScreenWidth()-img.getWidth() - offset ){
             vx = vx*-1;
         }
 
