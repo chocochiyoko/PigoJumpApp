@@ -3,14 +3,23 @@
 package com.example.pigojump;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 
 import com.example.pigojump.MapElements.Clouds.Cloud;
 import com.example.pigojump.MapElements.Clouds.HorizontalCloud;
 import com.example.pigojump.MapElements.Clouds.VerticalCloud;
+import com.example.pigojump.animations.IdleAnimation;
+import com.example.pigojump.animations.JumpAnimation;
+import com.example.pigojump.animations.WalkAnimation;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.xml.transform.Transformer;
 
 public class Pigo extends GameObject{
     private boolean JumpPressed = false;
@@ -24,21 +33,31 @@ public class Pigo extends GameObject{
     private int lives = 3, scoreInt = 0, apples = 0, timeOnLand, maxy, lastvx = 0;
     private String scoreString;
     private boolean KO = false, damageTaken, damageStatus, freeFall;
-//    private WalkAnimation walkanim;
-//    private IdleAnimation idleanim;
-//    private JumpAnimation jumpanim;
+    private WalkAnimation walkanim;
+    private IdleAnimation idleanim;
+    private JumpAnimation jumpanim;
     private Timer timer = new Timer();
     private ScreenInfo screen = new ScreenInfo();
     private boolean lastvertical = false;
     private int lastvy;
+    private Paint borderPaint, fillPaint, textPaint;
 
 
-    public Pigo(Bitmap img, int x, int y){
+    public Pigo(Bitmap img, int x, int y, ArrayList<Bitmap> animationImgs){
         super(img, x, y);
         this.img = img.createScaledBitmap(img, screen.getScreenWidth()/6, screen.getScreenHeight()/12, false);
-//        jumpanim = new JumpAnimation();
-//        walkanim = new WalkAnimation();
-//        idleanim = new IdleAnimation();
+        jumpanim = new JumpAnimation(animationImgs);
+        walkanim = new WalkAnimation(animationImgs);
+        idleanim = new IdleAnimation(animationImgs);
+        borderPaint = new Paint();
+        borderPaint.setColor(Color.WHITE);
+        borderPaint.setStrokeWidth(3);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        fillPaint = new Paint();
+        fillPaint.setColor(Color.GREEN);
+        textPaint = new Paint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(100);
 
     }
 
@@ -128,7 +147,7 @@ public class Pigo extends GameObject{
         if (maxy-y > 1000){
             freeFall = true;
         }
-        if (maxy-y > 1500){
+        if (maxy-y > screenHeight*2){
             KO = true;
         }
         scoreInt = (maxy*10) + apples - timeOnLand;
@@ -226,9 +245,9 @@ public class Pigo extends GameObject{
     public void allCollisions(ArrayList<GameObject> objects){
 
         for (int i = 0; i < objects.size(); i++){
-            if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/4)
+            if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/2)
                         && (y-img.getHeight() - objects.get(i).gety() >= 0))
-                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/4)
+                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/2)
                          &&  (y-img.getHeight() - objects.get(i).gety() <= 0)   ))
                     && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/650
                     && objects.get(i) instanceof VerticalCloud){
@@ -257,6 +276,14 @@ public class Pigo extends GameObject{
 //                System.out.println("power up?");
 //                ((PowerUps) objects.get(i)).power(this);
 //                }
+            }
+            else if (vy <= -screen.getScreenHeight()/100 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()*2)
+                    && (y-img.getHeight() - objects.get(i).gety() >= 0))
+                    )
+                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/300
+                    && objects.get(i) instanceof Cloud){
+                vy = 0;
+                y = objects.get(i).gety()+this.getImgHeight();
             }
         }
         camy = y+screen.getScreenHeight()/2;
@@ -314,6 +341,41 @@ public class Pigo extends GameObject{
         return damageTaken;
     }
 
+    public void drawImage (Canvas canvas, int camera){
+        coordy = camera-y;
+        Matrix outputMatrix = new Matrix();
+        outputMatrix.postTranslate(x, coordy);
+
+        if ((lastvx < 0 || LeftPressed > 0 ) && RightPressed == 0){
+
+            outputMatrix.postScale(-1,1, x + img.getWidth()/2, screen.getScreenHeight());
+
+        }
+
+        if (isOnLand && vx==0){
+
+            img = idleanim.returnFrame(counter, JumpPressed);
+
+        }
+
+
+        if (isOnLand && vx!=0){
+            img = walkanim.returnFrame(counter, JumpPressed);
+        }
+        if (isOnLand && vx==0){
+            img = idleanim.returnFrame(counter, JumpPressed);
+        }
+        else if (!isOnLand) {
+            img = jumpanim.returnFrame(counter, vy);
+        }
+        canvas.drawBitmap(this.img, outputMatrix, null);
+
+        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+img.getWidth()+6, coordy, borderPaint);
+        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+((jumpPower-10)*img.getWidth()/((screen.getScreenHeight()/48)-10)), coordy, fillPaint);
+        canvas.drawText(scoreString, 10, 100, textPaint);
+
+
+    }
 //    public void drawImage (Graphics g, int camera){
 //        coordy = camera-y;
 //        AffineTransform flip = AffineTransform.getTranslateInstance(x, coordy);

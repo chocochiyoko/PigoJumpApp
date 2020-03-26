@@ -1,6 +1,7 @@
 package com.example.pigojump;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -28,6 +29,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 //    private pigoControls controls;
     private int cam;
     private ArrayList<Bitmap> mapImages = new ArrayList<Bitmap>();
+    private ArrayList<Bitmap> animationsImgs = new ArrayList<>();
 
     public GameView(Context context){
         super(context);
@@ -45,12 +47,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.cloudyellow));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.clearcloud));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.star));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0000));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0001));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0002));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigowalk_0000));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigowalk_0001));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigowalk_0002));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0001));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0002));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0003));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0009));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0006));
+            animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0007));
         }
         catch (Exception e){
             Log.i("bleh", "errooooor");
         }
         pigoMap = new GameMap(mapImages);
-        pigo = new Pigo(pigoImg, 500, 1000);
+        pigo = new Pigo(pigoImg, 500, 1000, animationsImgs);
         collisions = new Collisions(pigoMap,pigo);
 
 
@@ -68,6 +82,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         pigo.update(getWidth(), getHeight());
         collisions.checkCollisions(getWidth());
         cam = pigo.getcamy();
+
 
     }
 

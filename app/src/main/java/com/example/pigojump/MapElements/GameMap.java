@@ -147,7 +147,11 @@ public class GameMap {
 //                }
                 if (object instanceof BreakCloud && object.getRect().intersects(pigo.getRect())
                         && pigo.getvy() <=0
-                        &&  !((BreakCloud) object).isRunning()){
+                        &&  !((BreakCloud) object).isRunning()
+                        && ((pigo.gety()-pigo.getImgHeight() - object.gety() <= (object.getImgHeight()/4)
+                        && (pigo.gety()-pigo.getImgHeight() - object.gety() >= 0)
+                        || (pigo.gety()-pigo.getImgHeight() - object.gety() >= -(object.getImgHeight()/4)
+                        &&  (pigo.gety()-pigo.getImgHeight() - object.gety() <= 0)   )))){
                     ((BreakCloud) object).disappear(collideables, pigo);
                     i[0]++;
                     System.out.println("break cloud!");
@@ -168,9 +172,9 @@ public class GameMap {
 //
 //
 //            }
-//            if (pigo.getmaxy()-collideables.get(i[0]).gety() > 1000){
-//                collideables.remove(i[0]);
-//            }
+            if (pigo.getmaxy()-collideables.get(i[0]).gety() > screen.getScreenHeight()){
+                collideables.remove(i[0]);
+            }
              }
 
 
@@ -283,12 +287,7 @@ public class GameMap {
         }
 
     }
-//    public void drawMapFloor(Graphics g) {
-//        Graphics2D g2d = (Graphics2D) g;
-//        g2d.drawImage(background, 0, 0, null);
-//
-//
-//    }
+
     public void makeStars (int starmaker){
 
        // nonCollideables.sort(Comparator.comparing(GameObject::gety));
