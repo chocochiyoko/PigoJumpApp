@@ -31,7 +31,7 @@ public class HorizontalCloud extends Cloud{
         else if ( x <= offset ){
             vx = vx*-1;
         }
-        else if ( x >= screen.getScreenWidth()-img.getWidth() - offset ){
+        else if ( x >= screen.getScreenWidth()-img.getWidth() - screen.getScreenWidth()/8 ){
             vx = vx*-1;
         }
 

@@ -90,6 +90,7 @@ public class MainGameActivity extends AppCompatActivity implements SensorEventLi
         if (pigo.isKO()){
             Intent intent = new Intent(this, EndScreen.class);
             int score = pigo.getScore();
+            view.endThread();
             intent.putExtra("Score", score);
             startActivity(intent);
         }

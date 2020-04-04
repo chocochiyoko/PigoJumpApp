@@ -47,6 +47,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.cloudyellow));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.clearcloud));
             mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.star));
+            mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.apple));
+            mapImages.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.bugo));
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0000));
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0001));
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigoidle_0002));
@@ -90,6 +92,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(
                 bMap, getWidth(), getHeight(), false);
         canvas.drawBitmap(resizedBitmap, getLeft(), getTop(), null);
+    }
+    public void endThread (){
+        thread.setRunning(false);
     }
 
     @Override

@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import com.example.pigojump.MapElements.Clouds.Cloud;
 import com.example.pigojump.MapElements.Clouds.HorizontalCloud;
 import com.example.pigojump.MapElements.Clouds.VerticalCloud;
+import com.example.pigojump.MapElements.Powerup;
 import com.example.pigojump.animations.IdleAnimation;
 import com.example.pigojump.animations.JumpAnimation;
 import com.example.pigojump.animations.WalkAnimation;
@@ -40,7 +41,7 @@ public class Pigo extends GameObject{
     private ScreenInfo screen = new ScreenInfo();
     private boolean lastvertical = false;
     private int lastvy;
-    private Paint borderPaint, fillPaint, textPaint;
+    private Paint borderPaint, fillPaint, textPaint, damagePaint;
 
 
     public Pigo(Bitmap img, int x, int y, ArrayList<Bitmap> animationImgs){
@@ -58,6 +59,10 @@ public class Pigo extends GameObject{
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(100);
+        damagePaint = new Paint();
+        damagePaint.setColor(Color.RED);
+        damagePaint.setAlpha(100);
+
 
     }
 
@@ -272,10 +277,7 @@ public class Pigo extends GameObject{
 //
 
                 }
-//            if (objects.get(i) instanceof PowerUps){
-//                System.out.println("power up?");
-//                ((PowerUps) objects.get(i)).power(this);
-//                }
+
             }
             else if (vy <= -screen.getScreenHeight()/100 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()*2)
                     && (y-img.getHeight() - objects.get(i).gety() >= 0))
@@ -373,6 +375,10 @@ public class Pigo extends GameObject{
         canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+img.getWidth()+6, coordy, borderPaint);
         canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+((jumpPower-10)*img.getWidth()/((screen.getScreenHeight()/48)-10)), coordy, fillPaint);
         canvas.drawText(scoreString, 10, 100, textPaint);
+
+        if (damageTaken){
+            canvas.drawRect(0, 0, screen.getScreenWidth(), screen.getScreenHeight(), damagePaint);
+        }
 
 
     }
