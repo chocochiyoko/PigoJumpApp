@@ -6,41 +6,78 @@
     android:layout_height="match_parent"
     tools:context=".EndScreen">
 
+    <ImageView
+        android:scaleType="fitXY"
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/pigobackground4"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
     <TextView
         android:id="@+id/CurrScore"
-        android:layout_width="wrap_content"
-        android:layout_height="17dp"
-        android:text="TextView"
+        android:layout_width="253dp"
+        android:layout_height="94dp"
+        android:gravity="center"
+        android:text="Title"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19" />
+        app:layout_constraintVertical_bias="0.073" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:background="@drawable/rounded"
         android:onClick="sendMessage"
         android:text="Restart"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.906" />
+        app:layout_constraintVertical_bias="0.975" />
+
+    <Button
+        android:id="@+id/Title"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:background="@drawable/rounded"
+        android:onClick="sendMessage3"
+        android:text="Title"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        app:fontFamily="@font/snigletfamily"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.095"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.975" />
 
     <TextView
         android:id="@+id/AllScores"
-        android:layout_width="222dp"
-        android:layout_height="276dp"
-        android:text="TextView"
+        android:layout_width="224dp"
+        android:layout_height="371dp"
+        android:text="scores"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.593" />
+        app:layout_constraintVertical_bias="0.827" />
 
     <EditText
         android:id="@+id/nameinput"
@@ -48,7 +85,8 @@
         android:layout_height="43dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
+        android:textColor="#FFFFFF"
+        app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.36"
@@ -62,10 +100,14 @@
         android:layout_height="43dp"
         android:layout_marginStart="248dp"
         android:layout_marginLeft="248dp"
+        android:background="@drawable/rounded"
         android:onClick="sendMessage2"
-        android:text="Button"
+        android:text="enter"
+        android:textColor="#FFFFFF"
+        app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.265" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
