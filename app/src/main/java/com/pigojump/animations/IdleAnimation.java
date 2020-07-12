@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class IdleAnimation {
     private Bitmap Frame1, Frame2, Frame3;
     private ScreenInfo screen = new ScreenInfo();
-    int length = 10;
+    int length = 25;
     public IdleAnimation(ArrayList<Bitmap> imgs){
 
         Frame1 = Bitmap.createScaledBitmap(imgs.get(0), screen.getScreenWidth()/6, screen.getScreenHeight()/12, false);

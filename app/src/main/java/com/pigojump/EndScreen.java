@@ -69,6 +69,9 @@ public class EndScreen extends AppCompatActivity {
             // Do something in response to button
             EditText editText = (EditText) findViewById(R.id.nameinput);
             name = editText.getText().toString();
+            if (name.length() > 8 ) {
+                name = name.substring(0,8);
+            }
             if (name != ""){
                 db.ScoresDao().insertAll(new Scores(name, currScore));
                 System.out.println("trying to add");
@@ -76,7 +79,7 @@ public class EndScreen extends AppCompatActivity {
 
 
                 scoreDisplay = "";
-                toAdd= "Your Rank: \n" + currrank + ")" + name + "..." + currScore + "\n\n";
+                toAdd= "Your Rank: \n" + currrank + ")" + name + ": " + currScore + "\n\n";
                 //scoreDisplay += toAdd;
                 currScoreView.setText(toAdd);
                 //reprintScores();

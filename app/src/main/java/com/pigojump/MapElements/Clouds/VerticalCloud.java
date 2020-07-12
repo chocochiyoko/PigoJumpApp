@@ -15,7 +15,7 @@ public class VerticalCloud extends Cloud {
     public VerticalCloud(Bitmap img, int x, int y, int speed) {
         super(img, x, y);
         starty = y;
-        vy = speed * screen.getScreenHeight()/350;
+        vy = (speed * 3)/screen.getscale();
     }
     public void update(ArrayList<GameObject> clouds){
         y += vy;

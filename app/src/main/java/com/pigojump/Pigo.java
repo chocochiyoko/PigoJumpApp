@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
+import com.pigojump.MapElements.Clouds.BreakCloud;
 import com.pigojump.MapElements.Clouds.Cloud;
 import com.pigojump.MapElements.Clouds.HorizontalCloud;
 import com.pigojump.MapElements.Clouds.VerticalCloud;
@@ -27,7 +28,7 @@ public class Pigo extends GameObject{
     private int RightPressed;
     private int LeftPressed;
     private boolean JumpEnd;
-    private int vy = -20, vx = 0, jumpPower = 10, slipspeed = 8;
+    private int vy = 0, vx = 0, jumpPower = 10, slipspeed = 8;
     private boolean isOnLand = false;
     private int camy;
     public static int counter = 0;
@@ -43,6 +44,7 @@ public class Pigo extends GameObject{
     private int lastvy;
     private Paint borderPaint, fillPaint, textPaint, damagePaint;
     private Bitmap heart, heart2;
+    private int scalecheck, scalecheck2;
 
 
     public Pigo(Bitmap img, int x, int y, ArrayList<Bitmap> animationImgs){
@@ -65,6 +67,15 @@ public class Pigo extends GameObject{
         damagePaint = new Paint();
         damagePaint.setColor(Color.RED);
         damagePaint.setAlpha(100);
+        vy = -10;
+        if (screen.getscale()/3 < 1) {
+            scalecheck = 1;
+            scalecheck2 = 1;
+        }
+        else {
+            scalecheck = screen.getscale()/3;
+            scalecheck2 =  2 * (screen.getscale()/3);
+        }
 
 
     }
@@ -110,6 +121,30 @@ public class Pigo extends GameObject{
     }
     public int getmaxy (){return maxy; }
 
+    public boolean isRestingOn(GameObject platform) {
+        boolean isFalling = vy <= 0;
+        boolean isVerticallyAligned = Math.abs(y - img.getHeight() - platform.gety()) < 12;
+        boolean isLeftAligned = x + getImgWidth() > platform.getx();
+        boolean isRightAligned = x < platform.getx() + platform.getImgWidth();
+        if (isFalling && isVerticallyAligned && isLeftAligned && isRightAligned ){
+            return true;
+        }
+        return false;
+
+    }
+    public boolean isIntersecting(GameObject object) {
+        boolean isUpAligned = y + getImgHeight() > object.gety();
+        boolean isDownAligned = y < object.gety() + object.getImgHeight();
+        boolean isLeftAligned = x + getImgWidth() > object.getx();
+        boolean isRightAligned = x < object.getx() + object.getImgWidth();
+        if (isDownAligned && isLeftAligned && isRightAligned && isUpAligned) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public void update(int screenWidth, int screenHeight) {
         counter ++;
 
@@ -121,8 +156,8 @@ public class Pigo extends GameObject{
             lastvertical = false;
         }
 
-        if (this.JumpPressed && jumpPower <= screenHeight/52 ) {
-            jumpPower += 1.5;
+        if (this.JumpPressed && jumpPower <= (38*(screen.getscale()))) {
+            jumpPower += 2;
         }
 
         if (this.JumpPressed && this.JumpEnd){
@@ -134,13 +169,18 @@ public class Pigo extends GameObject{
             jumpPower = 10;
         }
 
-        if (vy >= -(screenHeight/60)){
+        if (vy >= -20/screen.getscale()){
             //900
-            vy -= screenHeight/890;
+
+            vy -= 1
+            ;
         }
 
-        x+=(vx*.5);
-        y+=vy*1.5;
+//        x+=(vx*.5);
+//        y+=vy*1.5;
+
+        x+=vx;
+        y+=vy;
 
 
 
@@ -153,13 +193,13 @@ public class Pigo extends GameObject{
             maxy = y;
 
         }
-        if (maxy-y > 1000){
+        if (maxy-y > screen.getScreenHeight() * 5){
             freeFall = true;
         }
         if (maxy-y > screenHeight*2){
             KO = true;
         }
-        scoreInt = (maxy*10) + apples - timeOnLand;
+        scoreInt = (maxy*10) + apples;
 
         //System.out.println(scoreInt);
         scoreString = String.valueOf(scoreInt);
@@ -181,63 +221,45 @@ public class Pigo extends GameObject{
 
     public void sideAccelerate (int screenWidth){
 
-        if (this.LeftPressed == 1 && vx > -(screenWidth/300)){
-            vx -= screenWidth/1000;
+        if (this.LeftPressed == 1 && vx > -8 / screen.getscale() ){
+
+                vx -= 1;
+
+
         }
-        else if (this.RightPressed == 1 && vx < (screenWidth/300)){
-            vx += screenWidth/1000;
+        else if (this.RightPressed == 1 && vx < 8 / screen.getscale()){
+
+                vx += 1;
+
         }
-        if (this.LeftPressed == 2 && vx > -(screenWidth/35)){
-            vx -= screenWidth/600;
+        if (this.LeftPressed == 2 && vx > -8 / screen.getscale()){
+
+                vx -= 1;
+
         }
-        else if (this.RightPressed == 2 && vx < (screenWidth/35)){
-            vx += screenWidth/600;
+        else if (this.RightPressed == 2 && vx < 8 / screen.getscale()){
+
+                vx += 1;
+
         }
         else if (this.RightPressed == 0 && this.LeftPressed == 0){
-            if (vx > 0){
-                vx -= screenWidth/1000;
+            if (vx > 0 && counter % 4 < 3){
+                vx -= 1;
             }
-            else if (vx < 0){
-                vx += screenWidth/1000;
+            else if (vx < 0 && counter % 4 < 3){
+                vx += 1;
             }
         }
-//        if (this.LeftPressed && vx > -(screenWidth/25) && counter % 4 == 0) {
-////            if (vx <= 0 && vx > -7){
-////
-////                vx = -7;
-////            }
-//            if (vx > (screenWidth/10)){
-//                vx -=screenWidth/40;
-//            }
-//            vx -= screenWidth/300;
-//            //vx--;
-//        }
-//        else if (this.RightPressed && vx < (screenWidth/25) && counter % 4 == 0) {
-////            if (vx >= 0 && vx < 7){
-////                vx = 7;
-////            }
-//            if (vx < -(screenWidth/10)){
-//                vx += screenWidth/40;
-//            }
-//            vx += screenWidth/300;
-//            //vx++;
-//        }
-//        else if (!this.RightPressed && vx > 0 && counter % slipspeed == 0){
-//            vx -= screenWidth/1000;
-//        }
-//        else if (!this.LeftPressed && vx < 0 && counter % slipspeed ==0){
-//            vx += screenWidth/1000;
-//        }
-////        else {
-////            if ( vx < 0){
-////                vx++;
-////            }
-////            else if (vx > 0){
-////                vx--;
-////            }
-////        }
-//
-
+        if (this.RightPressed > 0 && vx < 0) {
+            if (counter % 4 < 3) {
+                vx --;
+            }
+        }
+        if (this.LeftPressed > 0 && vx > 0) {
+            if (counter % 4 < 3) {
+                vx ++;
+            }
+        }
     }
 
     public void StartJump (int power, boolean override){
@@ -250,6 +272,24 @@ public class Pigo extends GameObject{
     }
     public int getImgHeight(){
         return img.getHeight();
+    }
+    public void allCollisions2 (ArrayList<GameObject> objects) {
+        for (int i = 0; i <objects.size(); i++) {
+
+            if (objects.get(i) instanceof HorizontalCloud){
+                x += ((HorizontalCloud) objects.get(i)).getv();
+            }if (objects.get(i) instanceof VerticalCloud) {
+                if (vy >=0){
+                    y -= 12;
+                }
+                y += ((VerticalCloud) objects.get(i)).getv();
+            }
+            if(objects.get(i) instanceof Cloud) {
+                vy = 0;
+                y = objects.get(i).gety() + img.getHeight();
+            }
+
+        }
     }
     public void allCollisions(ArrayList<GameObject> objects){
 
@@ -376,8 +416,8 @@ public class Pigo extends GameObject{
         }
         canvas.drawBitmap(this.img, outputMatrix, null);
 
-        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+img.getWidth()+6, coordy, borderPaint);
-        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+((jumpPower)*img.getWidth()/((screen.getScreenHeight()/52))), coordy, fillPaint);
+        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+img.getWidth()+8, coordy, borderPaint);
+        canvas.drawRect(x, coordy-screen.getScreenHeight()/40, x+((jumpPower)*img.getWidth()/(38*(scalecheck))), coordy, fillPaint);
         canvas.drawText(scoreString, 10, 100, textPaint);
 
         for (int i = 1; i <= lives; i++){

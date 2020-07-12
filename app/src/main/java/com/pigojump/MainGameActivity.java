@@ -98,20 +98,20 @@ public class MainGameActivity extends AppCompatActivity implements SensorEventLi
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             xAccel = event.values[0];
-            if (xAccel >= 0.5 && xAccel <= 1){
+            if (xAccel >= 0.5 && xAccel <= 2){
                 this.pigo.toggleRightPressed(0);
                 this.pigo.toggleLeftPressed(1);
 
             }
-            else if (xAccel <= -0.5 && xAccel >= -1){
+            else if (xAccel <= -0.5 && xAccel >= -2){
                 this.pigo.toggleLeftPressed(0);
                 this.pigo.toggleRightPressed(1);
             }
-            else if (xAccel > 1){
+            else if (xAccel > 2){
                 this.pigo.toggleRightPressed(0);
                 this.pigo.toggleLeftPressed(2);
             }
-            else if (xAccel < -1){
+            else if (xAccel < -2){
                 this.pigo.toggleLeftPressed(0);
                 this.pigo.toggleRightPressed(2);
             }

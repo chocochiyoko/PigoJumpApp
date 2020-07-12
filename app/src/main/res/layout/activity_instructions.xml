@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Instructions">
+    tools:context=".Instructions"
+    android:background="#858585">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -13,23 +14,26 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/instructions" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/instructions3" />
 
     <Button
         android:id="@+id/backtotitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="sendMessage"
+        android:layout_width="114dp"
+        android:layout_height="63dp"
         android:background="@drawable/rounded"
-        android:textColor="#FFFFFF"
+        android:onClick="sendMessage"
         android:text="Back"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
         app:fontFamily="@font/snigletfamily"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.232"
+        app:layout_constraintHorizontal_bias="0.253"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.932" />
+        app:layout_constraintVertical_bias="0.939" />
 </androidx.constraintlayout.widget.ConstraintLayout>

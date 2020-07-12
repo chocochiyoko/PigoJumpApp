@@ -9,10 +9,16 @@ public class ScreenInfo {
     private int screenWidth;
     private int screenHeight;
     private int cloudSpace  = 7;
+    private int scale ;
 
     public ScreenInfo(){
-        screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
-        screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        scale =  (int) (2 * Resources.getSystem().getDisplayMetrics().density / 3);
+        if (scale <= 2 ) {
+            scale = 1;
+        }
+        screenWidth = (Resources.getSystem().getDisplayMetrics().widthPixels);
+        screenHeight = (Resources.getSystem().getDisplayMetrics().heightPixels);
+
 
     }
     public int getScreenWidth(){
@@ -21,6 +27,9 @@ public class ScreenInfo {
 
     public int getScreenHeight() {
         return screenHeight;
+    }
+    public int getscale () {
+        return scale;
     }
 
     public int getCloudSpace(){

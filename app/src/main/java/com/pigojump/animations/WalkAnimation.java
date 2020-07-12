@@ -30,10 +30,10 @@ public class WalkAnimation {
         if (JumpPressed){
             img = Frame4;
         }
-        else if (counter % 3 == 0){
+        else if (counter % 18 < 7){
             img = Frame1;
         }
-        else if (counter % 3 == 1){
+        else if (counter % 18 <= 12){
             img = Frame2;
         }
         else {

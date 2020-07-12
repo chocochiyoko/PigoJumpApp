@@ -13,9 +13,11 @@ public class Collisions {
     }
 
     public void checkCollisions(int width){
-        ArrayList<GameObject> check = gameMap.checkPigoCollision(pigo);
+//        ArrayList<GameObject> check = gameMap.checkPigoCollision(pigo);
+        ArrayList<GameObject> check = gameMap.pigoCollision2(pigo);
+
         if (!check.isEmpty()){
-            pigo.allCollisions(check);
+            pigo.allCollisions2(check);
         }
         pigo.checkBorder(width);
     }

@@ -11,6 +11,7 @@ import android.media.Image;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.widget.ImageView;
@@ -27,17 +28,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameMap pigoMap;
     private Pigo pigo;
     private Collisions collisions;
-//    private pigoControls controls;
+    //    private pigoControls controls;
     private int cam;
     private ArrayList<Bitmap> mapImages = new ArrayList<Bitmap>();
     private ArrayList<Bitmap> animationsImgs = new ArrayList<>();
     private boolean started = false;
+    private Bitmap resizedBitmap;
+    private ScreenInfo screen = new ScreenInfo();
+    private boolean start = false;
+    private boolean pause = false;
+    private long lasttime;
 
-    public GameView(Context context, AttributeSet attr){
+    public GameView(Context context, AttributeSet attr) {
+
         super(context, attr);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
+
 
         try {
 
@@ -64,27 +72,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0006));
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.pigojump_0007));
             animationsImgs.add(BitmapFactory.decodeResource(this.getResources(), R.drawable.life1));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Log.i("bleh", "errooooor");
         }
+        resizedBitmap = Bitmap.createScaledBitmap(
+                bMap, screen.getScreenWidth(), screen.getScreenHeight(), false);
         pigoMap = new GameMap(mapImages);
         pigo = new Pigo(pigoImg, 500, 1000, animationsImgs);
-        collisions = new Collisions(pigoMap,pigo);
-
+        collisions = new Collisions(pigoMap, pigo);
+        setKeepScreenOn(true);
+        lasttime = System.currentTimeMillis();
 
 
 
     }
-    public GameView(Context c){
+
+    public GameView(Context c) {
         this(c, null);
     }
-    public Pigo getPigo(){
+
+    public Pigo getPigo() {
         return this.pigo;
     }
 
-    public void pause (){
+    public void pause() {
+        System.out.println("PAUSE");
         thread.togglepause();
+        pause = !pause;
     }
 
     public void update() {
@@ -98,12 +112,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    public void drawSkyMap(Canvas canvas){
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(
-                bMap, getWidth(), getHeight(), false);
-        canvas.drawBitmap(resizedBitmap, getLeft(), getTop(), null);
+    public void drawSkyMap(Canvas canvas) {
+
+        canvas.drawBitmap(resizedBitmap, 0, 0, null);
     }
-    public void endThread (){
+
+    public void endThread() {
         thread.setRunning(false);
     }
 
@@ -115,13 +129,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         System.out.println("surface created");
-        if(!started){
+        if (!started) {
             thread.setRunning(true);
             thread.start();
         }
 
-        if(started){
-           // thread.setRunning(true);
+        if (started) {
+             thread.setRunning(true);
             this.pause();
         }
         started = true;
@@ -148,13 +162,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void draw(Canvas canvas) {
-        update();
-        super.draw(canvas);
+        long thistime = System.currentTimeMillis()- lasttime;
 
-        drawSkyMap(canvas);
-        pigoMap.drawElements(canvas,cam);
+        if (!pause && thistime > 16) {
+            lasttime = System.currentTimeMillis();
+            update();
+        }
+
+
+        //System.out.println(thistime);
+        super.draw(canvas);
+//        if(!start){
+//            drawSkyMap(canvas);
+//            start = false;
+//        }
+        //canvas.drawBitmap(resizedBitmap, 0, 0, null);
+
+        //drawSkyMap(canvas);
+        pigoMap.drawElements(canvas, cam);
         pigo.drawImage(canvas, cam);
 
+        this.postInvalidate();
 
 
 //        GameRectangle one = new GameRectangle( 300, 300, 300, 300);
