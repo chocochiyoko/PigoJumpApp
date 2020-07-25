@@ -95,30 +95,47 @@ public class MainGameActivity extends AppCompatActivity implements SensorEventLi
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if(isPaused) {
+            return;
+        }
+        //System.out.println(xAccel);
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             xAccel = event.values[0];
-            if (xAccel >= 0.5 && xAccel <= 2){
+            if (xAccel >= 0.8) {
                 this.pigo.toggleRightPressed(0);
-                this.pigo.toggleLeftPressed(1);
+                this.pigo.toggleLeftPressed(xAccel - (float) 0.3);
 
             }
-            else if (xAccel <= -0.5 && xAccel >= -2){
+            else if (xAccel <= -0.8) {
+                this.pigo.toggleRightPressed((-xAccel) - (float) 0.3);
                 this.pigo.toggleLeftPressed(0);
-                this.pigo.toggleRightPressed(1);
-            }
-            else if (xAccel > 2){
-                this.pigo.toggleRightPressed(0);
-                this.pigo.toggleLeftPressed(2);
-            }
-            else if (xAccel < -2){
-                this.pigo.toggleLeftPressed(0);
-                this.pigo.toggleRightPressed(2);
             }
             else {
-                this.pigo.toggleLeftPressed(0);
                 this.pigo.toggleRightPressed(0);
+                this.pigo.toggleLeftPressed(0);
             }
+//            if (xAccel >= 0.5 && xAccel <= 2){
+//                this.pigo.toggleRightPressed(0);
+//                this.pigo.toggleLeftPressed(1);
+//
+//            }
+//            else if (xAccel <= -0.5 && xAccel >= -2){
+//                this.pigo.toggleLeftPressed(0);
+//                this.pigo.toggleRightPressed(1);
+//            }
+//            else if (xAccel > 2){
+//                this.pigo.toggleRightPressed(0);
+//                this.pigo.toggleLeftPressed(2);
+//            }
+//            else if (xAccel < -2){
+//                this.pigo.toggleLeftPressed(0);
+//                this.pigo.toggleRightPressed(2);
+//            }
+//            else {
+//                this.pigo.toggleLeftPressed(0);
+//                this.pigo.toggleRightPressed(0);
+//            }
         }
         if (pigo.isKO()){
             Intent intent = new Intent(this, EndScreen.class);

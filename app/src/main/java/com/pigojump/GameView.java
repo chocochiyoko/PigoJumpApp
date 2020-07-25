@@ -129,15 +129,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         System.out.println("surface created");
-        if (!started) {
-            thread.setRunning(true);
-            thread.start();
-        }
-
-        if (started) {
-             thread.setRunning(true);
-            this.pause();
-        }
+//        if (!started) {
+//            thread.setRunning(true);
+//            thread.start();
+//        }
+//
+//        if (started) {
+//             thread.setRunning(true);
+//            this.pause();
+//        }
         started = true;
 
 
@@ -164,7 +164,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         long thistime = System.currentTimeMillis()- lasttime;
 
-        if (!pause && thistime > 16) {
+        if (!pause && thistime > 4) {
             lasttime = System.currentTimeMillis();
             update();
         }

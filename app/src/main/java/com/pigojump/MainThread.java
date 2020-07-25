@@ -52,40 +52,40 @@ public class MainThread extends Thread {
                 lastTime = System.currentTimeMillis();
                 try {
 
-                    canvas = this.surfaceHolder.lockCanvas();
-                    synchronized(surfaceHolder) {
-//                        gameView.draw(canvas);
-//                        final Timer timer = new Timer();
-//                        TimerTask FPS = new TimerTask(){
-//                            @Override
-//                            public void run() {
-//                                gameView.update();
+//                    canvas = this.surfaceHolder.lockCanvas();
+//                    synchronized(surfaceHolder) {
+////                        gameView.draw(canvas);
+////                        final Timer timer = new Timer();
+////                        TimerTask FPS = new TimerTask(){
+////                            @Override
+////                            public void run() {
+////                                gameView.update();
+////
+////                            }
+////                        };
+////
+////
+////                        timer.schedule(FPS, 1);
+////                        timer.cancel();
+//                        //thisTime = System.currentTimeMillis() - lastTime;
+//                        System.out.println("this time" + thisTime);
+//                        //lastTime = System.currentTimeMillis();
+//                        //System.out.println("beep" + screen.getScale());
+//                        //this.gameView.update();
+//                        this.gameView.draw(canvas);
 //
-//                            }
-//                        };
 //
 //
-//                        timer.schedule(FPS, 1);
-//                        timer.cancel();
-                        //thisTime = System.currentTimeMillis() - lastTime;
-                        System.out.println("this time" + thisTime);
-                        //lastTime = System.currentTimeMillis();
-                        //System.out.println("beep" + screen.getScale());
-                        //this.gameView.update();
-                        this.gameView.draw(canvas);
-
-
-
+////
+////                        if (80 - thisTime > 0) {
+////                            System.out.println("beep");
+////                            currentThread().sleep(80 - (thisTime));
+////                        }
+////
+////                        System.out.println("boop");
 //
-//                        if (80 - thisTime > 0) {
-//                            System.out.println("beep");
-//                            currentThread().sleep(80 - (thisTime));
-//                        }
-//
-//                        System.out.println("boop");
 
-
-                    }
+                    //}
                 } catch (Exception e) {} finally {
                     if (canvas != null) {
                         //System.out.println("hello?");

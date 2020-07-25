@@ -37,6 +37,7 @@ public class GameMap {
     private int StarCounter = 0;
     private boolean lastvertical = false;
     private boolean lastbreakable = false;
+    private boolean lasthorizontal = false;
     private int lastspeed = 0;
     private int lastEnemy = 600;
     private Timer timer = new Timer();
@@ -98,8 +99,15 @@ public class GameMap {
             if (pigo.isRestingOn(collideables.get(i)) && collideables.get(i) instanceof Cloud){
                 returnVal.add(collideables.get(i));
                 pigo.setIsOnLand(true);
-                if (collideables.get(i) instanceof BreakCloud) {
+                if (i > collideables.size()*0.2) {
+                    System.out.println("remake at on cloud y " + collideables.get(i).gety());
+                    makeElements(3);
+                     makeStars(3);
+
+                }
+                if (collideables.get(i) instanceof BreakCloud && !((BreakCloud) collideables.get(i)).isRunning()) {
                     ((BreakCloud) collideables.get(i)).disappear(this.collideables, pigo);
+                    continue;
                 }
             }
 
@@ -107,15 +115,26 @@ public class GameMap {
                 System.out.println("collide");
                 if (collideables.get(i) instanceof Powerup) {
                     collideables.remove(i);
+                    continue;
                 }
                 else if (collideables.get(i) instanceof Enemies && pigo.getvy() <= 0 && pigo.getJumpEnd()) {
                     ((Enemies)collideables.get(i)).killedBy(pigo);
                     collideables.remove(i);
+                    continue;
                 }
-                else {
+                else if (collideables.get(i).gety() > pigo.gety()){
                     pigo.takeDamage();
                 }
             }
+
+//
+            if (pigo.getmaxy()-collideables.get(i).gety() > screen.getScreenHeight() * 1.3){
+
+                    collideables.remove(i);
+                //nonCollideables.remove(i);
+            }
+
+
         }
         return returnVal;
     }
@@ -234,9 +253,10 @@ public class GameMap {
             if (lastspeed == speed){
                 speed ++;
             }
-            if (lastbreakable){
+            if (lastbreakable || lasthorizontal){
                 type = 0;
                 lastbreakable = false;
+                lasthorizontal = false;
                 xlimit = 300;
             }
             if (lastvertical){
@@ -300,6 +320,7 @@ public class GameMap {
 //                }
                 collideables.add(new HorizontalCloud(cloudHoriImg, xpos, ymove + lastypos, speed));
                 lastxpos = xpos+((ruler.getImgWidth())/2);
+                lasthorizontal = true;
             }
             else if (type == 3){
                 for (int m = 0; m <= length; m++){

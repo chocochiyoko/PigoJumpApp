@@ -82,7 +82,7 @@ public class EndScreen extends AppCompatActivity {
                 toAdd= "Your Rank: \n" + currrank + ")" + name + ": " + currScore + "\n\n";
                 //scoreDisplay += toAdd;
                 currScoreView.setText(toAdd);
-                //reprintScores();
+                reprintScores();
                 submitted = true;
                 editText.setText("");
                 System.out.println("done");

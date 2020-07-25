@@ -25,14 +25,14 @@ import javax.xml.transform.Transformer;
 
 public class Pigo extends GameObject{
     private boolean JumpPressed = false;
-    private int RightPressed;
-    private int LeftPressed;
+    private float RightPressed;
+    private float LeftPressed;
     private boolean JumpEnd;
-    private int vy = 0, vx = 0, jumpPower = 10, slipspeed = 8;
+    private float vy = 0, vx = 0, jumpPower = 10, friction = 2, lastvx = 0;
     private boolean isOnLand = false;
     private int camy;
     public static int counter = 0;
-    private int lives = 3, scoreInt = 0, apples = 0, timeOnLand, maxy, lastvx = 0;
+    private int lives = 3, scoreInt = 0, apples = 0, timeOnLand, maxy;
     private String scoreString;
     private boolean KO = false, damageTaken, damageStatus, freeFall;
     private WalkAnimation walkanim;
@@ -80,11 +80,11 @@ public class Pigo extends GameObject{
 
     }
 
-    void toggleRightPressed(int i) {
+    void toggleRightPressed(float i) {
         this.RightPressed = i;
     }
 
-    void toggleLeftPressed(int i) {
+    void toggleLeftPressed(float i) {
         this.LeftPressed = i;
     }
 
@@ -110,7 +110,7 @@ public class Pigo extends GameObject{
         return img.getWidth();
     }
 
-    public int getvy() {
+    public float getvy() {
         return vy;
     }
     public boolean getIsOnLand (){
@@ -123,7 +123,7 @@ public class Pigo extends GameObject{
 
     public boolean isRestingOn(GameObject platform) {
         boolean isFalling = vy <= 0;
-        boolean isVerticallyAligned = Math.abs(y - img.getHeight() - platform.gety()) < 12;
+        boolean isVerticallyAligned = Math.abs(y - img.getHeight() - platform.gety()) < 15;
         boolean isLeftAligned = x + getImgWidth() > platform.getx();
         boolean isRightAligned = x < platform.getx() + platform.getImgWidth();
         if (isFalling && isVerticallyAligned && isLeftAligned && isRightAligned ){
@@ -144,6 +144,7 @@ public class Pigo extends GameObject{
             return false;
         }
     }
+
 
     public void update(int screenWidth, int screenHeight) {
         counter ++;
@@ -178,8 +179,7 @@ public class Pigo extends GameObject{
 
 //        x+=(vx*.5);
 //        y+=vy*1.5;
-
-        x+=vx;
+        x += vx;
         y+=vy;
 
 
@@ -220,49 +220,60 @@ public class Pigo extends GameObject{
     public boolean isFreeFall (){ return freeFall; }
 
     public void sideAccelerate (int screenWidth){
-
-        if (this.LeftPressed == 1 && vx > -8 / screen.getscale() ){
-
-                vx -= 1;
-
-
-        }
-        else if (this.RightPressed == 1 && vx < 8 / screen.getscale()){
-
-                vx += 1;
-
-        }
-        if (this.LeftPressed == 2 && vx > -8 / screen.getscale()){
-
-                vx -= 1;
-
-        }
-        else if (this.RightPressed == 2 && vx < 8 / screen.getscale()){
-
-                vx += 1;
-
-        }
-        else if (this.RightPressed == 0 && this.LeftPressed == 0){
-            if (vx > 0 && counter % 4 < 3){
-                vx -= 1;
+        if (this.LeftPressed > 0 && vx > -7 / screen.getscale()) {
+            if ( vx > 0) {
+                vx = 0;
             }
-            else if (vx < 0 && counter % 4 < 3){
-                vx += 1;
+            if (isOnLand && vx <= 0) {
+                vx -= (Math.pow(this.LeftPressed/8, 2)) ;
+            }
+            else if (isOnLand && vx > 0) {
+                vx -= vx/5;
+                if (vx < 1) {
+                    vx = 0;
+                }
+            }
+            else {
+                vx -= (this.LeftPressed/5);
+            }
+
+        }
+        else if (this.RightPressed > 0 && vx < 7 / screen.getscale()) {
+            if ( vx < 0) {
+                vx = 0;
+            }
+            if (isOnLand && vx >= 0) {
+                vx += (Math.pow(this.RightPressed/8, 2));
+
+            }
+            else if (isOnLand && vx < 0) {
+                vx -= vx/5;
+                if (vx > -1) {
+                    vx = 0;
+                }
+            }
+            else {
+                vx += (this.RightPressed/5);
+            }
+
+        }
+        else if (LeftPressed == 0 && RightPressed == 0){
+            System.out.println("hello?");
+            if (vx <= -1){
+                vx -= vx/17;
+            }
+            else if (vx >= 1) {
+                vx -= vx/15;
+            }
+            else {
+                vx = 0;
+
             }
         }
-        if (this.RightPressed > 0 && vx < 0) {
-            if (counter % 4 < 3) {
-                vx --;
-            }
-        }
-        if (this.LeftPressed > 0 && vx > 0) {
-            if (counter % 4 < 3) {
-                vx ++;
-            }
-        }
+
     }
 
-    public void StartJump (int power, boolean override){
+    public void StartJump (float power, boolean override){
         if (isOnLand || override){
             isOnLand = false;
             vy = power;
@@ -277,10 +288,19 @@ public class Pigo extends GameObject{
         for (int i = 0; i <objects.size(); i++) {
 
             if (objects.get(i) instanceof HorizontalCloud){
-                x += ((HorizontalCloud) objects.get(i)).getv();
+                if (((HorizontalCloud) objects.get(i)).getv() > 0 && vx > 0) {
+
+                }
+                else if (((HorizontalCloud) objects.get(i)).getv() < 0 && vx < 0) {
+
+                }
+                else {
+                    x += ((HorizontalCloud) objects.get(i)).getv();
+                }
+
             }if (objects.get(i) instanceof VerticalCloud) {
                 if (vy >=0){
-                    y -= 12;
+                    y -= 15;
                 }
                 y += ((VerticalCloud) objects.get(i)).getv();
             }
@@ -291,49 +311,7 @@ public class Pigo extends GameObject{
 
         }
     }
-    public void allCollisions(ArrayList<GameObject> objects){
-
-        for (int i = 0; i < objects.size(); i++){
-            if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/2)
-                        && (y-img.getHeight() - objects.get(i).gety() >= 0))
-                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/2)
-                         &&  (y-img.getHeight() - objects.get(i).gety() <= 0)   ))
-                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/650
-                    && objects.get(i) instanceof VerticalCloud){
-                y = objects.get(i).gety()+img.getHeight();
-                vy = 0;
-                isOnLand = true;
-            }
-            else if (vy <= 0 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()/4)
-                    && (y-img.getHeight() - objects.get(i).gety() >= 0))
-                    || (y-img.getHeight() - objects.get(i).gety() >= -(objects.get(i).getImgHeight()/4)
-                    &&  (y-img.getHeight() - objects.get(i).gety() <= 0)   ))
-                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/300
-                    && objects.get(i) instanceof Cloud) {
-                isOnLand = true;
-                vy = 0;
-                y += getRect().intersection(objects.get(i).getRect()).getHeight();
-
-
-
-                if (objects.get(i) instanceof HorizontalCloud){
-                    x += ((HorizontalCloud) objects.get(i)).getv() ;
 //
-
-                }
-
-            }
-            else if (vy <= -screen.getScreenHeight()/100 && ((y-img.getHeight() - objects.get(i).gety() <= (objects.get(i).getImgHeight()*2)
-                    && (y-img.getHeight() - objects.get(i).gety() >= 0))
-                    )
-                    && getRect().intersection(objects.get(i).getRect()).getWidth() > screen.getScreenWidth()/800
-                    && objects.get(i) instanceof Cloud){
-                vy = 0;
-                y = objects.get(i).gety()+this.getImgHeight();
-            }
-        }
-        camy = y+screen.getScreenHeight()/2;
-    }
     public void checkBorder(int width) {
 
         if (x < 0) {
@@ -405,14 +383,14 @@ public class Pigo extends GameObject{
         }
 
 
-        if (isOnLand && vx!=0){
+        if (isOnLand && Math.abs(vx) > 1){
             img = walkanim.returnFrame(counter, JumpPressed);
         }
-        if (isOnLand && vx==0){
+        else if (isOnLand){
             img = idleanim.returnFrame(counter, JumpPressed);
         }
         else if (!isOnLand) {
-            img = jumpanim.returnFrame(counter, vy);
+            img = jumpanim.returnFrame(counter, (int) vy);
         }
         canvas.drawBitmap(this.img, outputMatrix, null);
 
@@ -430,41 +408,7 @@ public class Pigo extends GameObject{
 
 
     }
-//    public void drawImage (Graphics g, int camera){
-//        coordy = camera-y;
-//        AffineTransform flip = AffineTransform.getTranslateInstance(x, coordy);
-//
-//        if ((lastvx < 0 || LeftPressed) && !RightPressed){
-//            flip.scale(-1, 1);
-//            flip.translate(-img.getWidth(), 0);
-//        }
-//
-//        if (isOnLand && vx!=0){
-//            img = walkanim.returnFrame(counter, JumpPressed);
-//        }
-//        else if (isOnLand && vx==0){
-//            img = idleanim.returnFrame(counter, JumpPressed);
-//        }
-//        else if (!isOnLand) {
-//            img = jumpanim.returnFrame(counter, vy);
-//        }
-//        Graphics2D g2d = (Graphics2D) g;
-//
-//        g2d.drawImage(this.img, flip, null);
-//
-//        //super.drawImage(g, camera);
-//        g.setColor(Color.green);
-//        g.fillRect(x, coordy-15, ((jumpPower-10)*img.getWidth()/30), 10);
-//        g.setColor(Color.white);
-//        g.drawRect(x, coordy-15, img.getWidth(), 10);
-//        g.setFont(new Font("Lucida Handwriting", Font.BOLD, 20));
-//        g.drawString(scoreString, 0, 50);
-//        g.setColor(new Color(200, 0, 0 , 100));
-//        if (damageTaken){
-//            g.fillRect(0, 0, 800, 800);
-//        }
 
-//    }
 
 
 
